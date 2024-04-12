@@ -70,3 +70,32 @@ export interface ExpenseCriteria extends PagingCriteria {
   name?: string;
   yearMonth?: string;
 }
+
+export interface ExpensesResponse {
+  totalPages: number;
+  totalElements: number;
+  number: number;
+  size: number;
+  numberOfElements: number;
+  content: Expense[];
+  sort: {
+    sorted: boolean;
+    empty: boolean;
+    unsorted: boolean;
+  };
+  first: boolean;
+  last: boolean;
+  pageable: {
+    paged: boolean;
+    unpaged: boolean;
+    pageNumber: number;
+    pageSize: number;
+    offset: number;
+    sort: {
+      sorted: boolean;
+      empty: boolean;
+      unsorted: boolean;
+    };
+  };
+  empty: boolean;
+}
