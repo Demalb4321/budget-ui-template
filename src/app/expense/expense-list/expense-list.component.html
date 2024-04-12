@@ -1,1 +1,53 @@
-Expense List
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Expenses</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-icon name="swap-vertical" class="ion-margin-end"></ion-icon>
+          <ion-select placeholder="Sort">
+            <ion-select-option>Option</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-icon name="pricetag" class="ion-margin-end"></ion-icon>
+          <ion-select placeholder="Category">
+            <ion-select-option>Option</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-icon name="search" class="ion-margin-end"></ion-icon>
+          <ion-input placeholder="search"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button>
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button>
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ date | date: 'MMMM yyyy' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon name="arrow-forward"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>
