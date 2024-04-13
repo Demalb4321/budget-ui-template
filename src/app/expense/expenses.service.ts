@@ -18,7 +18,7 @@ export class ExpensesApiService {
     return this.http.put<void>(`${environment.backendUrl}/expenses`, expense);
   }
 
-  public deleteExpense(id: number): Observable<void> {
+  public deleteExpense(id: string): Observable<void> {
     return this.http.delete<void>(`${environment.backendUrl}/expenses/${id}`);
   }
 }

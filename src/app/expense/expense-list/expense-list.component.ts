@@ -120,6 +120,6 @@ export class ExpenseListComponent {
     });
     modal.present();
     const { role } = await modal.onWillDismiss();
-    if (role == 'save') this.getAllExpenses();
+    if (role == 'save' || role == 'delete') this.getAllExpenses();
   }
 }

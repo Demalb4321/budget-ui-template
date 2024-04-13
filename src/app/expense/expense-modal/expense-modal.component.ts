@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Observable, filter, from } from 'rxjs';
 import { CategoryModalComponent } from '../../category/category-modal/category-modal.component';
@@ -7,6 +7,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ExpensesApiService } from '../expenses.service';
 import { CategoryService } from 'src/app/category/category.service';
 import { ToastService } from 'src/app/shared/service/toast.service';
+import { Expense } from 'src/app/shared/domain';
 
 @Component({
   selector: 'app-expense-modal',
@@ -22,7 +23,9 @@ export class ExpenseModalComponent {
   public expenseCategories$!: Observable<any[]>;
   public submitting: boolean = false;
 
-  public newExpenseForm: FormGroup = new FormGroup({
+  @Input() expense: Expense | null = null;
+
+  public expenseForm: FormGroup = new FormGroup({
     amount: new FormControl(0, [Validators.min(0.001), Validators.required]),
     categoryId: new FormControl(null),
     name: new FormControl('', Validators.required),
@@ -31,6 +34,13 @@ export class ExpenseModalComponent {
 
   ionViewWillEnter(): void {
     this.getExpenseCategories();
+
+    if (this.expense) {
+      this.expenseForm.patchValue({
+        ...this.expense,
+        categoryId: this.expense.category ? this.expense.category.id : null,
+      });
+    }
   }
 
   private getExpenseCategories(): void {
@@ -41,11 +51,24 @@ export class ExpenseModalComponent {
     this.modalCtrl.dismiss(null, 'cancel');
   }
 
-  save(): void {
-    const { categoryId } = this.newExpenseForm.value;
-    const expense = this.newExpenseForm.value;
+  public removeCategory(): void {
+    this.expenseForm.patchValue({
+      categoryId: null,
+    });
+  }
 
-    if (categoryId == null) delete expense.categoryId;
+  save(): void {
+    const { categoryId } = this.expenseForm.value;
+    const expense = this.expenseForm.value;
+
+    if (categoryId == 'null') delete expense.categoryId;
+
+    if (this.expense) expense.id = this.expense.id;
+
+    for (const controlName of Object.keys(this.expenseForm.controls)) {
+      const control = this.expenseForm.get(controlName);
+      control?.disable();
+    }
 
     this.submitting = true;
 
@@ -58,6 +81,10 @@ export class ExpenseModalComponent {
       error: (error) => {
         this.submitting = false;
         this.toastService.displayErrorToast('Could not save expense', error);
+        for (const controlName of Object.keys(this.expenseForm.controls)) {
+          const control = this.expenseForm.get(controlName);
+          control?.enable();
+        }
       },
       complete: () => (this.submitting = false),
     });
@@ -66,7 +93,21 @@ export class ExpenseModalComponent {
   delete(): void {
     from(this.actionSheetService.showDeletionConfirmation('Are you sure you want to delete this expense?'))
       .pipe(filter((action) => action === 'delete'))
-      .subscribe(() => this.modalCtrl.dismiss(null, 'delete'));
+      .subscribe(() => {
+        if (this.expense) {
+          this.expensesApiService.deleteExpense(this.expense.id).subscribe({
+            complete: () => {
+              this.toastService.displaySuccessToast('Expense has been deleted.');
+              this.modalCtrl.dismiss(null, 'delete');
+            },
+
+            error: (error) => {
+              this.toastService.displayErrorToast('Could not delete expense', error);
+              this.modalCtrl.dismiss(null, 'error');
+            },
+          });
+        }
+      });
   }
 
   async showCategoryModal(): Promise<void> {
