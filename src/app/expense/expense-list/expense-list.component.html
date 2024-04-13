@@ -8,28 +8,32 @@
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-  <ion-grid>
+  <ion-grid [formGroup]="filterForm">
     <ion-row>
       <ion-col>
         <ion-item>
           <ion-icon name="swap-vertical" class="ion-margin-end"></ion-icon>
-          <ion-select placeholder="Sort">
-            <ion-select-option>Option</ion-select-option>
+          <ion-select formControlName="sort" placeholder="Sort">
+            <ion-select-option *ngFor="let option of sortOptions" [value]="option.value">{{
+              option.label
+            }}</ion-select-option>
           </ion-select>
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item>
           <ion-icon name="pricetag" class="ion-margin-end"></ion-icon>
-          <ion-select placeholder="Category">
-            <ion-select-option>Option</ion-select-option>
+          <ion-select formControlName="categoryIds" placeholder="Category" [multiple]="true">
+            <ion-select-option *ngFor="let category of categories$ | async" [value]="category.id">{{
+              category.name
+            }}</ion-select-option>
           </ion-select>
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item>
           <ion-icon name="search" class="ion-margin-end"></ion-icon>
-          <ion-input placeholder="search"></ion-input>
+          <ion-input formControlName="name" placeholder="search"></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
